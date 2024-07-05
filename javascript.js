@@ -2,7 +2,6 @@ let humanScore = 0;
 let computerScore = 0;
 
 function getComputerChoice() {
- 
     let randomNumber = Math.random();
 
     if (randomNumber <= 0.33) {
@@ -12,39 +11,16 @@ function getComputerChoice() {
     } else {
         return "scissors";
     }
-
 }
-
-function getHumanChoice() {
-    let humanChoice = prompt("Rock, paper, scissors?").toLowerCase();
-
-    if (humanChoice == "rock") {
-        return "rock";
-    } else if (humanChoice == "scissors") {
-        return "scissors";
-    } else if (humanChoice == "paper") {
-        return "paper";
-    } else {
-        return "Invalid input";
-    }
-}
-
 
 function playRound(humanChoice, computerChoice) {
-    console.log("Your choice: " + humanChoice);
-    console.log("Computer's choice: " + computerChoice);
-
     let roundResult;
 
     if (humanChoice === computerChoice) {
         roundResult = `It's a tie! You both chose ${humanChoice}`;
-    } else if (humanChoice == "rock" && computerChoice == "scissors") {
-        roundResult = `You win! ${humanChoice} beats ${computerChoice}!`;
-        computerScore++;
-    } else if (humanChoice == "scissors" && computerChoice == "paper") {
-        roundResult = `You win! ${humanChoice} beats ${computerChoice}`;
-        humanScore++;
-    } else if (humanChoice == "paper" && computerChoice == "rock"){
+    } else if (humanChoice == "rock" && computerChoice == "scissors" || 
+               humanChoice == "scissors" && computerChoice == "paper" || 
+               humanChoice == "paper" && computerChoice == "rock") {
         roundResult = `You win! ${humanChoice} beats ${computerChoice}`;
         humanScore++;
     } else {
@@ -54,33 +30,32 @@ function playRound(humanChoice, computerChoice) {
 
     return roundResult;
 }
- 
-function playGame(){
-    for(let i = 0; i <= 5; i++){
-        const humanChoice = getHumanChoice();
-        if(humanChoice === "Invalid input"){
-            console.log("Please enter again");
-            i--;
-            continue;
-        }
-        const computerChoice = getComputerChoice();
-        console.log(`Round ${i + 1}`);
-        console.log(playRound(humanChoice, computerChoice));
-    }
-    
-    if (humanScore > computerScore) {
-        console.log("You won the game!");
-        console.log(`Your final score: ${humanScore}`);
-        console.log(`Computer's final score: ${computerScore}`);
-    } else {
-        console.log(`The computer has won with the score of ${computerScore}`);
-        console.log(`Your final score: ${humanScore}`);
-        console.log(`Computer's final score: ${computerScore}`);
-    }
-    
 
-    humanScore = 0;
-    computerScore = 0;
+function playGame(humanChoice) {
+    const result = document.querySelector("#result");
+
+    const computerChoice = getComputerChoice();
+    const roundResult = playRound(humanChoice, computerChoice);
+
+    result.textContent = `${roundResult} \nYour score: ${humanScore} \nComputer's score: ${computerScore}`;
+
+    if (humanScore >= 5 || computerScore >= 5) {
+        if (humanScore > computerScore) {
+            result.textContent += "\nYou won the game!";
+        } else {
+            result.textContent += "\nThe computer has won the game!";
+        }
+        result.textContent += `\nFinal scores: \nHuman: ${humanScore}, Computer: ${computerScore}`;
+
+        humanScore = 0;
+        computerScore = 0;
+    }
 }
- 
-playGame();
+
+const rockButton = document.querySelector("#rock");
+const paperButton = document.querySelector("#paper");
+const scissorsButton = document.querySelector("#scissors");
+
+rockButton.addEventListener("click", () => playGame("rock"));
+paperButton.addEventListener("click", () => playGame("paper"));
+scissorsButton.addEventListener("click", () => playGame("scissors"));
